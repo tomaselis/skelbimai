@@ -44,6 +44,7 @@ class CommentController extends Controller
         $comment ->advert_id = $request -> advert_id;
         $comment->content = $request->content_text;
         $comment->save();
+        return redirect()->back();
 
     }
 

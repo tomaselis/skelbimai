@@ -14,4 +14,9 @@ class Advert extends Model
     {
         return 'slug';
     }
+
+    public function scopeActive($query)
+    {
+        return $query->where('active', 1);
+    }
 }

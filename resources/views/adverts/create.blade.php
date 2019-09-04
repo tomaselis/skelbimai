@@ -1,6 +1,15 @@
 @extends('layouts.app')
 
 @section('content')
+    @if(session()->has('message'))
+        <div class="row">
+            <div class="col-12">
+                <div class="alert alert-success alert-dismissible">
+                    {{session()->get('message')}}
+                </div>
+            </div>
+        </div>
+    @endif
     <div class="container">
         <div class="row justify-content-center">
             <div class="col-md-8">
@@ -14,18 +23,17 @@
                                 <input class="form-control" id="title" name="title" placeholder="Pavadinimas">
                             </div>
                             <div class="form-group">
-                                <textarea class="form-control" name="contentas"
-                                          placeholder="Skelbimo apibūdinimas"></textarea>
+                                <textarea  class="form-control" name="contentas" placeholder="Skelbimo apibūdinimas"></textarea>
                             </div>
                             <div class="form-group">
-                                <input class="form-control" type="text" name="image"
-                                       placeholder="Pridekite nuoroda į nuotrauką">
+                                <input class="form-control"  type="text" name="image" placeholder="Pridekite nuoroda į nuotrauką">
                             </div>
+
                             <div class="form-group">
                                 <input class="form-control" type="number" name="price" placeholder="Kaina">
                             </div>
                             <div class="form-group">
-                                <select class="form-control">
+                                <select name="category_id" class="form-control">
                                     <option>Pasirinkti kategorija</option>
                                     @foreach($categories as $cat)
                                         <option value="{{$cat->id}}">{{$cat->title}}</option>

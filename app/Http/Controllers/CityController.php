@@ -43,6 +43,8 @@ class CityController extends Controller
         $city -> slug = Str::slug($request ->title);
         $city->active = 1;
         $city->save();
+        return redirect()->back();
+
     }
 
     /**

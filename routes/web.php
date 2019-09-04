@@ -17,7 +17,7 @@ Route::get('/', function () {
 
 
 Route::get('home', 'HomeController@index');
-
+Route::get('advert/nt', 'AdvertController@nt')->name('adverts.nt');
 
 Auth::routes();
 //Route::get('/home', 'HomeController@index')
@@ -26,3 +26,15 @@ Route::resource('advert', 'AdvertController');
 Route::resource('category', 'CategoryController');
 Route::resource('comment', 'CommentController');
 Route::resource('city', 'CityController');
+Route::resource('messages', 'MessageController');
+Route::get('messages', 'MessageController@index')->name('messages.index');
+Route::get('messages/{id}', 'MessageController@show')->name('message.show');
+
+
+
+//Route::get('messages', 'MessageController@index')->name('messages.index');
+//Route::get('messages/{id}', 'MessageController@show')->name('message.show');
+//Route::get('messages/{id}', 'MessageController@create')->name('message.create');
+//Route::get('messages/{id}', 'MessageController@store')->name('message.store');
+
+

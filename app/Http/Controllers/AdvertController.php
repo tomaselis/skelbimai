@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Advert;
 use App\Category;
 use App\City;
+use App\Comments;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
@@ -17,10 +18,19 @@ class AdvertController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+
+    public function nt()
     {
         $adverts = Advert::all();
         $data['adverts'] = $adverts;
+        return view('adverts.nt', $data);
+    }
+
+
+    public function index()
+
+    {
+        $data['adverts'] = Advert::active()->paginate(6);
         return view('adverts.all', $data);
     }
 
@@ -63,6 +73,7 @@ class AdvertController extends Controller
         $advert->active = 1;
         $advert->category_id = $request->category_id;
         $advert->save();
+        return redirect()->back()->with('message', 'Jūsų sklebimas sėkmingai sukurtas');;
 
     }
 
@@ -76,7 +87,10 @@ class AdvertController extends Controller
     public function show(Advert $advert)
     {
         $data['advert'] = $advert;
+        $data['comments'] = Comments::where('advert_id', $advert->id)->get();
+//        dd($data['comments']);
         return view('adverts.single', $data);
+
     }
 
     /**
@@ -88,9 +102,10 @@ class AdvertController extends Controller
     public function edit($id)
     {
         $user = Auth::user();
-        $advert = Advert::find($id);
-        if ($user && ($user->hasRole('admin|editor|moderator') || ($user->hasRole('client') && $user->id == $advert->user_id))){
-
+        $advert = Advert::where('slug', $id)->first();
+//        dd($advert);
+        if ($user && $user->hasRole('admin|editor|moderator')){
+//            || ($user->hasRole('client') && $user->id == $advert->user_id))
         $categories = Category::all();
         $data['advert'] = $advert;
         $cities = City::all();
@@ -133,7 +148,9 @@ class AdvertController extends Controller
      */
     public function destroy($id)
     {
+
         $advert = Advert::find($id);
+
         $advert-> active = 0;
         $advert ->save();
     }

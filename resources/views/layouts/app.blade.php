@@ -8,10 +8,12 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
     <title>{{ config('app.name', 'Laravel') }}</title>
-
-    <!-- Scripts -->
     <script src="{{ asset('js/app.js') }}" defer></script>
 
+
+    <!-- Scripts -->
+
+{{--    <script src="https://cdn.ckeditor.com/4.11.1/standard/ckeditor.js"></script>--}}
     <!-- Fonts -->
     <link rel="dns-prefetch" href="//fonts.gstatic.com">
     <link href="https://fonts.googleapis.com/css?family=Nunito" rel="stylesheet">
@@ -32,10 +34,7 @@
 
                 <div class="collapse navbar-collapse" id="navbarSupportedContent">
                     <!-- Left Side Of Navbar -->
-                    <ul class="navbar-nav mr-auto">
-
-                    </ul>
-
+                    @include('pages.menu.categories')
                     <!-- Right Side Of Navbar -->
                     <ul class="navbar-nav ml-auto">
                         <!-- Authentication Links -->
@@ -54,8 +53,11 @@
                                 </li>
                             @endif
                         @else
+                            <li class="nav-item">
+                                <a class="nav-link" href="{{route('messages.index')}}">Messages ({{$messageCount}})</a>
+                            </li>
                             <li class="nav-item"><a class="nav-link" href="{{ url('/advert') }}">Pagrindinis</a></li>
-                            <li class="nav-item"><a class="nav-link" ref="{{ url('/home') }}">Kategorijos</a></li>
+                            <li class="nav-item"><a class="nav-link" href="{{ url('/category') }}">Kategorijos</a></li>
                             <li class="nav-item"><a class="nav-link" href="{{ url('/home') }}">Paieška</a></li>
                             <li class="nav-item dropdown">
                                 <a id="navbarDropdown" class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>
@@ -84,9 +86,15 @@
             @yield('content')
         </main>
     </div>
-    <script src="/vendor/unisharp/laravel-ckeditor/ckeditor.js"></script>
+
+    <script src="{{ asset('vendor/unisharp/laravel-ckeditor/ckeditor.js') }}"></script>
+
     <script>
-        CKEDITOR.replace( 'contentas' );
+        document.addEventListener("DOMContentLoaded", function(){
+            $('#summary-ckeditor').ckeditor();
+        });
+
     </script>
+
 </body>
 </html>

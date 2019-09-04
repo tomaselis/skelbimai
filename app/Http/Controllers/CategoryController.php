@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Advert;
 use App\Category;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
@@ -15,8 +16,12 @@ class CategoryController extends Controller
      */
     public function index()
     {
-        $data['categories'] = Category::all();
-        return view('categories.index', $data);
+        $category = Category::all();
+        $data['categories'] = $category;
+        return view('categories.all', $data);
+
+//        $data['categories'] = Category::all();
+//        return view('categories.index', $data);
     }
 
     /**
@@ -43,6 +48,8 @@ class CategoryController extends Controller
         $category->slug = Str::slug($request->title);
         $category->parent_id = $request->parent_id;
         $category->save();
+        return redirect()->back()->with('message', 'Kategorija sukurta');
+//        return redirect()->route('category.create');
     }
 
     /**

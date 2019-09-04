@@ -6,7 +6,9 @@
             <div class="col-md-8">
                 <div class="card">
                     <div class="card-header">Categories</div>
-                    <form class="mw-100" action="{{route('category.create')}}" method="get" > <input type="submit" class="btn btn-primary btn-lg btn-block" value="Add new"> </form>
+                    <form class="mw-100" action="{{route('category.create')}}" method="get" >
+                        <input type="submit" class="btn btn-primary btn-lg btn-block" value="Add new">
+                    </form>
                     <table class="table table-hover">
                         <thead>
                         <tr>
@@ -20,7 +22,6 @@
                         </thead>
                         <tbody>
                         @foreach($categories as $category)
-
                             <tr>
                                 <th scope="row">{{$category->id}}</th>
                                 <td>{{$category->title}}</td>
@@ -29,12 +30,20 @@
                                 <td>{{$category->active}}</td>
                                 <td><form class="d-inline" action="{{route('category.edit', $category->id)}}"><button type="submit" class="d-inline btn btn-primary btn-sm">Edit</button> </form>
                                     <form class="d-inline" action="{{route('category.destroy', $category->id)}}"> @method('DELETE') <button type="submit" class="d-inline btn btn-primary btn-sm">Delete</button> </form>
+                                    @foreach($category->subCategories as $subCategory)
+                                        <div class="col-lg-3">
+                                            <a href="{{route('category.show',$subCategory->slug)}}">{{$subCategory->title}}</a>
+                                        </div>
+                                    @endforeach
                                 </td>
                             </tr>
+
                         @endforeach
                         </tbody>
                     </table>
-                    <div class="card-body">
+                    <div class="card">
+
+                        </div>
                     </div>
                 </div>
             </div>
