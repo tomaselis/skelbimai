@@ -58,7 +58,7 @@
                             </li>
                             <li class="nav-item"><a class="nav-link" href="{{ url('/advert') }}">Pagrindinis</a></li>
                             <li class="nav-item"><a class="nav-link" href="{{ url('/category') }}">Kategorijos</a></li>
-                            <li class="nav-item"><a class="nav-link" href="{{ url('/home') }}">Paieška</a></li>
+                            <li class="nav-item"><a class="nav-link" href="{{ url('/advert') }}">Paieška</a></li>
                             <li class="nav-item dropdown">
                                 <a id="navbarDropdown" class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>
                                     {{ Auth::user()->name }} <span class="caret"></span>

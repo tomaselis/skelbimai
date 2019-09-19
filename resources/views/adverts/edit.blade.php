@@ -11,17 +11,26 @@
                         <form method="POST" action="{{route('advert.update', $advert->id)}}">
                             @csrf
                             @method('PUT')
-                            <input class="form-control" name="title"  value="{{$advert->title}}">
+                            <input class="form-control" name="title" value="{{$advert->title}}">
                             <textarea class="form-control" name="contentas">{{$advert->content}}</textarea>
-                            <input class="form-control" type="text" name="image"  value="{{$advert->image}}">
-                            <input class="form-control" type="number" name="price"  value="{{$advert->price}}">
+                            <input class="form-control" type="text" name="image" value="{{$advert->image}}">
+                            <input class="form-control" type="number" name="price" value="{{$advert->price}}">
+                            @foreach($attributes as $attribute)
+                                <input
+                                        class="form-control"
+                                        type="text"
+                                        name="super_attributes_{{$attribute->attributes->name}}"
+                                        placeholder="{{$attribute->attributes->label}}"
+                                >
+                            @endforeach
+
+
                             <select name="category">
                                 <option>Pasirinkti kategoriją</option>
                                 @foreach($categories as $cat)
                                     <option value="{{$cat->id}}">{{$cat->title}}</option>
                                 @endforeach
                             </select>
-
                             <select name="city">
                                 <option>Pasirinkti miestą</option>
                                 @foreach($cities as $city)

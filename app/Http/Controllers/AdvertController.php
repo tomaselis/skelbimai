@@ -3,12 +3,16 @@
 namespace App\Http\Controllers;
 
 use App\Advert;
+use App\AttributeSet;
+use App\AttributeValues;
+use App\Attributes;
 use App\Category;
 use App\City;
 use App\Comments;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
+use PHPUnit\Framework\Constraint\Attribute;
 
 
 class AdvertController extends Controller
@@ -45,6 +49,8 @@ class AdvertController extends Controller
         if ($user && ($user->hasRole('admin') || $user->hasRole('client'))) {
             $categories = Category::where('active', '=', 1)->get();
             $data['categories'] = $categories;
+            $attribute_set = AttributeSet::all();
+            $data['attribute_set'] = $attribute_set;
             $cities = City::where('active', '=', 1)->get();
             $data['cities'] = $cities;
             return view('adverts.create', $data);
@@ -56,7 +62,7 @@ class AdvertController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param \Illuminate\Http\Request $request
      * @return \Illuminate\Http\Response
      */
     public function store(Request $request)
@@ -69,7 +75,7 @@ class AdvertController extends Controller
         $advert->price = $request->price;
         $advert->user_id = $user->id;
         $advert->city_id = 1;
-        $advert->slug= Str::slug($request->title, '-');
+        $advert->slug = Str::slug($request->title, '-');
         $advert->active = 1;
         $advert->category_id = $request->category_id;
         $advert->save();
@@ -80,15 +86,17 @@ class AdvertController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  int  $id
+     * @param int $id
      * @return \Illuminate\Http\Response
      */
 
     public function show(Advert $advert)
     {
         $data['advert'] = $advert;
+        $data['values'] = AttributeValues::where('advert_id', $advert->id)->get();
+        $data['attributes'] = $advert->attributeSet->relations;
         $data['comments'] = Comments::where('advert_id', $advert->id)->get();
-//        dd($data['comments']);
+//        dd($data['values']);
         return view('adverts.single', $data);
 
     }
@@ -96,7 +104,7 @@ class AdvertController extends Controller
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  int  $id
+     * @param int $id
      * @return \Illuminate\Http\Response
      */
     public function edit($id)
@@ -104,29 +112,59 @@ class AdvertController extends Controller
         $user = Auth::user();
         $advert = Advert::where('slug', $id)->first();
 //        dd($advert);
-        if ($user && $user->hasRole('admin|editor|moderator')){
+        if ($user && $user->hasRole('admin|editor|moderator')) {
 //            || ($user->hasRole('client') && $user->id == $advert->user_id))
-        $categories = Category::all();
-        $data['advert'] = $advert;
-        $cities = City::all();
-        $data['categories'] = $categories;
-        $data['cities'] = $cities;
-        return view('adverts.edit', $data);
-        return view('adverts.create', $data);
-    } else {
+            $categories = Category::all();
+            $attribute_set = AttributeSet::all();
+            $data['attributes'] = $advert->attributeSet->relations;
+            $data['values'] = AttributeValues::where('advert_id', $advert->id)->get();
+            $data['advert'] = $advert;
+            $cities = City::all();
+            $data['categories'] = $categories;
+            $data['cities'] = $cities;
+            $data['attribute_set'] = $attribute_set;
+            return view('adverts.edit', $data);
+            return view('adverts.create', $data);
+        } else {
             return view('welcome');
         }
-}
+    }
 
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
+     * @param \Illuminate\Http\Request $request
+     * @param int $id
      * @return \Illuminate\Http\Response
      */
     public function update(Request $request, $id)
     {
+        $data = $request->except('_token');
+        $attributes = [];
+        foreach ($data as $key => $single) {
+            if (strpos($key, 'super_attributes_') !== false) {
+                $attributeName = str_replace('super_attributes_', '', $key);
+                $attributes[$attributeName] = $single;
+            }
+        }
+        foreach ($attributes as $name => $value) {
+            $attributeObject = Attributes::where('name', $name)->first();
+            $oldValue = AttributeValues::where('attribute_id', $attributeObject->id)
+                ->where('advert_id', $id)->first();
+            if (!is_null($value)) {
+                if ($oldValue === null) {
+                    $newValue = new AttributeValues();
+                    $newValue->attribute_id = $attributeObject->id;
+                    $newValue->advert_id = $id;
+                    $newValue->value = $value;
+                    $newValue->save();
+                } else {
+                    $oldValue->value = $value;
+                    $oldValue->save();
+                }
+            }
+        }
+        //Uzkrauna i duomenu baze
         $advert = Advert::find($id);
         $advert->title = $request->title;
         $advert->content = $request->contentas;
@@ -134,7 +172,7 @@ class AdvertController extends Controller
         $advert->price = $request->price;
         $advert->user_id = 1;
         $advert->city_id = 1;
-        $advert->slug= Str::slug($request->title, '-');
+        $advert->slug = Str::slug($request->title, '-');
         $advert->active = 1;
         $advert->category_id = $request->category;
         $advert->save();
@@ -143,15 +181,20 @@ class AdvertController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  int  $id
+     * @param int $id
      * @return \Illuminate\Http\Response
      */
     public function destroy($id)
     {
 
         $advert = Advert::find($id);
-
-        $advert-> active = 0;
-        $advert ->save();
+        $advert->active = 0;
+        $advert->save();
+        $user = Auth::user();
+        if ($user && ($user->hasRole('admin'))) {
+            return redirect()->action('AdminController@index');
+        } else {
+            return redirect()->action('HomeController@index');
+        }
     }
 }

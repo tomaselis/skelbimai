@@ -20,7 +20,9 @@ Route::get('home', 'HomeController@index');
 Route::get('advert/nt', 'AdvertController@nt')->name('adverts.nt');
 
 Auth::routes();
-//Route::get('/home', 'HomeController@index')
+
+Route::resource('admin', 'AdminController');
+////Route::get('/home', 'HomeController@index')
 
 Route::resource('advert', 'AdvertController');
 Route::resource('category', 'CategoryController');
@@ -30,7 +32,9 @@ Route::resource('messages', 'MessageController');
 Route::get('messages', 'MessageController@index')->name('messages.index');
 Route::get('messages/{id}', 'MessageController@show')->name('message.show');
 
-
+Route::get('attributes', 'AttributesController@index')->name('attributes.index');
+Route::get('attributes/storeset', 'AttributesController@storeSet')->name('attributes.storeSet');
+Route::get('attributes/storeattribute', 'AttributesController@storeAttribute')->name('attributes.storeAttribute');
 
 //Route::get('messages', 'MessageController@index')->name('messages.index');
 //Route::get('messages/{id}', 'MessageController@show')->name('message.show');

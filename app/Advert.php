@@ -19,4 +19,9 @@ class Advert extends Model
     {
         return $query->where('active', 1);
     }
+
+    public function attributeSet()
+    {
+        return $this->hasOne('App\AttributeSet','id', 'attribute_set_id');
+    }
 }

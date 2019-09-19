@@ -23,7 +23,16 @@
                         {!!$advert->content!!}
                     </div>
                     {{--                    {{dd($advert->category)}}--}}
-                    <div class="alert">Kategorija:{{$advert->category->title}}</div>
+                    <div class="alert">Kategorija:{{$advert->category->title}}
+
+                        @foreach($values as $value)
+                            {{--                        {{dd($value->attribute->label)}}--}}
+                            <div class="card-columns mt-4">{{$value->attribute->label}}: {{$value->value}} {{$value->attribute->attributeEnd->name}}</div>
+                        @endforeach
+                    </div>
+
+
+
                     <div class="card-footer">
                         <div class="d-inline mb-4">
                             <a class="btn btn-outline-dark" href="{{route('advert.edit', $advert->slug)}}">
