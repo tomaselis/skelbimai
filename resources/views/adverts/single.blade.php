@@ -23,7 +23,7 @@
                         {!!$advert->content!!}
                     </div>
                     {{--                    {{dd($advert->category)}}--}}
-                    <div class="alert">Kategorija:{{$advert->category->title}}
+                    <div class="alert">Kategorija: {{$advert->category->title}}
 
                         @foreach($values as $value)
                             {{--                        {{dd($value->attribute->label)}}--}}

@@ -10,7 +10,7 @@
                         <form method="get" action="{{route('attributes.storeSet')}}">
                             @csrf {{--neleidzia submitint formos is kito saito--}}
                             <input name="name" type="text" class="form-control mt-2"  placeholder="Atribute set name">
-                            <button class="btn alert-success mt-2">Create</button>
+                            <button class="btn btn-outline-dark mt-2">Sukurti rinkini</button>
                         </form>
                     </div>
                 </div>
@@ -39,7 +39,7 @@
                                     <option value="{{ $set->id }}">{{ucfirst($set->name)}}</option>
                                 @endforeach
                             </select>
-                            <button class="btn alert-success mt-2">Create</button>
+                            <button class="btn btn-outline-dark mt-2">Sukurti Atributa</button>
                         </form>
                     </div>
                 </div>

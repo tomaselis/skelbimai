@@ -37,7 +37,6 @@
 
                 <table class="table">
                     <tr>
-                        <th>#</th>
                         <th>Title</th>
                         <th>Content</th>
                         <th>Image</th>
@@ -47,22 +46,25 @@
                     </tr>
                     @foreach($adverts as $advert)
                         <tr>
-                            <td><input name="post[]" type="checkbox" value="{{$advert->id}}"></td>
                             <td>{{$advert->title}}</td>
                             <td width="400px">{!! Str::words($advert->content, 10, '...')!!}</td>
                             <td><img src="{{$advert->image}}" width="150px"></td>
                             <td>{{($advert->active == 1) ? "Active" : "Disabled"}}</td>
                             <td>
-                                <a href="{{route('advert.edit', $advert->slug)}}" type="submit" role="button"  class="btn btn-dark btn-sm">
-                                    EDIT
-                                </a>
+                                <div class="d-inline mb-4">
+                                    <a class="btn btn-outline-dark" href="{{route('advert.edit', $advert->slug)}}">
+                                        Edit
+                                    </a>
+                                </div>
                             </td>
                             <td>
+                                <div class="d-inline mb-4">
                                 <form method="post" action="{{action('AdvertController@destroy', $advert->id)}}">
                                     @csrf
                                     @method('DELETE')
-                                    <button type="submit" class="btn btn-dark btn-sm" onclick="return confirm('Are you sure?')">Delete</button>
+                                    <button type="submit" class="btn btn-outline-dark" onclick="return confirm('Are you sure?')">Delete</button>
                                 </form>
+                                </div>
                             </td>
                         </tr>
                     @endforeach
