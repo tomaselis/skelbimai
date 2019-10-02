@@ -44,7 +44,7 @@ class AttributesController extends Controller
         $attribute->label = ucfirst($request->name);
         $attribute->type_id = $request->type_id;
         $attribute->save();
-        $attribute = Attributes::where('name', $request->name)->first();
+        $attribute = Attributes::where('name', $str)->first();
         $set->attribute_set_id = $request->set_id;
         $set->attribute_id = $attribute->id;
         $set->save();

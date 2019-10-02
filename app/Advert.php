@@ -7,8 +7,14 @@ use Illuminate\Database\Eloquent\Model;
 class Advert extends Model
 {
     public function category(){
-        return $this->hasOne('App\Category', 'id', 'category_id');
+    return $this->hasOne('App\Category', 'id', 'category_id');
     }
+
+
+    public function imageGalery(){
+        return $this->hasMany('App\ImageGalery', 'advert_id', 'id');
+    }
+
 
     public function getRouteKeyName()
     {

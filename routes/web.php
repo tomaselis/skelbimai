@@ -36,6 +36,8 @@ Route::get('attributes', 'AttributesController@index')->name('attributes.index')
 Route::get('attributes/storeset', 'AttributesController@storeSet')->name('attributes.storeSet');
 Route::get('attributes/storeattribute', 'AttributesController@storeAttribute')->name('attributes.storeAttribute');
 
+
+Route::get('search', 'SearchController@search')->name('advert.search');
 //Route::get('messages', 'MessageController@index')->name('messages.index');
 //Route::get('messages/{id}', 'MessageController@show')->name('message.show');
 //Route::get('messages/{id}', 'MessageController@create')->name('message.create');

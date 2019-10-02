@@ -8,14 +8,18 @@
                     <div class="card-header">{{$advert->title}}</div>
                     <div class="container">
                         <div class="row">
-                            <div class="col-lg-9">
+                            <div class="col-lg-9 big-img mt-4">
                                 <img class="card-img" src="{{$advert->image}}">
                             </div>
                             <div class="col">
-                                <div class="col mt-4 col-sm-10"><img class="card-img" src="{{$advert->image}}"></div>
-                                <div class="col mt-4 col-sm-10"><img class="card-img" src="{{$advert->image}}"></div>
-                                <div class="col mt-4 col-sm-10"><img class="card-img" src="{{$advert->image}}"></div>
-                                <div class="col mt-4 col-sm-10"><img class="card-img" src="{{$advert->image}}"></div>
+                                <div class="small-image">
+                                <img class="col mt-4 col-sm-10 small-image" src="{{$advert->image}}" style="cursor:pointer">
+                                </div>
+                                @foreach($advert->imageGalery as $image)
+                                    <div class="small-image">
+                                        <img class="col mt-4 col-sm-10 small-image" src="{{$image->image}}" style="cursor:pointer">
+                                    </div>
+                                @endforeach
                             </div>
                         </div>
                     </div>
@@ -24,15 +28,14 @@
                     </div>
                     {{--                    {{dd($advert->category)}}--}}
                     <div class="alert">Kategorija: {{$advert->category->title}}
-
                         @foreach($values as $value)
+                                @if($value->attribute->attributeEnd !== null)
                             {{--                        {{dd($value->attribute->label)}}--}}
-                            <div class="card-columns mt-4">{{$value->attribute->label}}: {{$value->value}} {{$value->attribute->attributeEnd->name}}</div>
+                            <div class="card-columns mt-4">&#9830; {{$value->attribute->label}}
+                                : {{$value->value}} {{$value->attribute->attributeEnd->name}}</div>
+                            @endif
                         @endforeach
                     </div>
-
-
-
                     <div class="card-footer">
                         <div class="d-inline mb-4">
                             <a class="btn btn-outline-dark" href="{{route('advert.edit', $advert->slug)}}">
@@ -49,13 +52,13 @@
             </div>
         </div>
         @foreach($comments as $comment)
-        <div class="row justify-content-center">
-            <div class="card-body col-md-8">
-                <div class="card-footer">
+            <div class="row justify-content-center">
+                <div class="card-body col-md-8">
+                    <div class="card-footer">
                         {{$comment->content}}
+                    </div>
                 </div>
             </div>
-        </div>
         @endforeach
         <div class="row justify-content-center">
             <div class="card-body col-md-8">
@@ -70,4 +73,14 @@
             </div>
         </div>
     </div>
+
 @endsection
+<script>
+    window.onload = function () {
+        $('.small-image').click(function () {
+            var img = $(this).children('img').attr('src');
+            $('.big-img img').attr('src', img);
+        });
+    }
+</script>
+

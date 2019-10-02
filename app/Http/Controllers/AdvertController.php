@@ -9,8 +9,13 @@ use App\Attributes;
 use App\Category;
 use App\City;
 use App\Comments;
+use App\ImageGalery;
+use App\Mail\NewAdvert;
+use App\User;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
 use PHPUnit\Framework\Constraint\Attribute;
 
@@ -34,7 +39,7 @@ class AdvertController extends Controller
     public function index()
 
     {
-        $data['adverts'] = Advert::active()->paginate(6);
+        $data['adverts'] = Advert::active()->paginate(4);
         return view('adverts.all', $data);
     }
 
@@ -69,17 +74,33 @@ class AdvertController extends Controller
     {
         $user = auth()->user();
         $advert = new Advert();
+        $advert->expiration_date = Carbon::now()->add(7, 'day');
         $advert->title = $request->title;
         $advert->content = $request->contentas;
         $advert->image = $request->image;
         $advert->price = $request->price;
         $advert->user_id = $user->id;
-        $advert->city_id = 1;
+        $advert->attribute_set_id = $request->attribute_id;
+        $advert->city_id = $request->city_id;
         $advert->slug = Str::slug($request->title, '-');
         $advert->active = 1;
         $advert->category_id = $request->category_id;
         $advert->save();
-        return redirect()->back()->with('message', 'Jūsų sklebimas sėkmingai sukurtas');;
+
+        foreach ($request->galleryImage as $image) {
+
+            if ($image != '') {
+                $imageObj = new ImageGalery();
+                //priskiri
+                $imageObj->image = $image;
+                //seivini
+                $imageObj->advert_id = $advert->id;
+                $imageObj->active = 1;
+                $imageObj->save();
+            }
+        }
+
+        return redirect()->route('advert.edit', $advert->slug)->with('message', 'Papildykite savo skelbimą atributais');
 
     }
 
@@ -114,17 +135,21 @@ class AdvertController extends Controller
 //        dd($advert);
         if ($user && $user->hasRole('admin|editor|moderator')) {
 //            || ($user->hasRole('client') && $user->id == $advert->user_id))
-            $categories = Category::all();
+
             $attribute_set = AttributeSet::all();
             $data['attributes'] = $advert->attributeSet->relations;
             $data['values'] = AttributeValues::where('advert_id', $advert->id)->get();
             $data['advert'] = $advert;
-            $cities = City::all();
-            $data['categories'] = $categories;
-            $data['cities'] = $cities;
+            $data['categories'] = Category::all();
+            $data['cities'] = City::all();
             $data['attribute_set'] = $attribute_set;
             return view('adverts.edit', $data);
-            return view('adverts.create', $data);
+
+
+
+
+//
+
         } else {
             return view('welcome');
         }
@@ -164,18 +189,48 @@ class AdvertController extends Controller
                 }
             }
         }
+
+
+        //updatina images i duomenu baze
+
+        $keysOfRequest = $request->keys();
+        foreach ($keysOfRequest as $key) {
+            if (strpos($key, 'galleryImage_') !== false) {
+                $imageId = str_replace('galleryImage_', '', $key);
+                $imageObj = ImageGalery::find($imageId);
+                $imageObj->image = $request->$key;
+                $imageObj->save();
+            }
+        }
+
+        //uzkrauna tuscius langelius
+        if (isset($request->galleryImage)) {
+            foreach ($request->galleryImage as $image) {
+
+                if ($image != '') {
+                    $imageObj = new ImageGalery();
+                    //priskiri
+                    $imageObj->image = $image;
+                    //seivini
+                    $imageObj->advert_id = $imageObj->id;
+                    $imageObj->active = 1;
+                    $imageObj->save();
+                }
+            }
+        }
+
         //Uzkrauna i duomenu baze
         $advert = Advert::find($id);
         $advert->title = $request->title;
         $advert->content = $request->contentas;
         $advert->image = $request->image;
         $advert->price = $request->price;
-        $advert->user_id = 1;
-        $advert->city_id = 1;
+        $advert->city_id = $request->city_id;
         $advert->slug = Str::slug($request->title, '-');
         $advert->active = 1;
         $advert->category_id = $request->category;
         $advert->save();
+        return redirect()->route('advert.index')->with('message', 'Jūsų skelbimas įdėtas');
     }
 
     /**

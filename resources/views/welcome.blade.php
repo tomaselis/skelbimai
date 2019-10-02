@@ -78,6 +78,7 @@
                         <a href="{{ url('/home') }}">Paieška</a>
                         <a href="{{ url('/home') }}">Atsijungti</a>
                     @else
+                        <a href="{{ url('/advert') }}">Pagrindinis</a>
                         <a href="{{ route('login') }}">Prisjunk</a>
 
                         @if (Route::has('register'))
