@@ -146,12 +146,14 @@ class AdvertController extends Controller
             $data['categories'] = Category::all();
             $data['cities'] = City::all();
             $data['attribute_set'] = $attribute_set;
+
             return view('adverts.edit', $data);
+//            return redirect()->route('advert.index')->with('message', 'Jūsų skelbimas įdėtas');
 //            return view('adverts.create', $data);
 
 
 
-            return redirect()->route('advert.index')->with('message', 'Jūsų skelbimas įdėtas');
+
 
         } else {
             return view('welcome');
@@ -228,13 +230,13 @@ class AdvertController extends Controller
         $advert->content = $request->contentas;
         $advert->image = $request->image;
         $advert->price = $request->price;
-        $advert->user_id = $request->id;
+        $advert->user_id = Auth::id();
         $advert->city_id = $request->city_id;
         $advert->slug = Str::slug($request->title, '-');
         $advert->active = 1;
         $advert->category_id = $request->category;
         $advert->save();
-        return redirect()->back()->with('message', 'Skelbimo pakeitimai atlikti');
+        return redirect()->route('advert.show', $advert->slug)->with('message', 'Skelbimo pakeitimai atlikti');
     }
 
     /**
